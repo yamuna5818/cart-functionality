@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Checkout</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="checkout-body">
+    <div class="checkout-container">
+      <h2>🧾 Checkout</h2>
+      <div id="checkout-summary"></div>
+
+      <h3>Customer Information</h3>
+      <form id="checkout-form">
+        <input type="text" placeholder="Full Name" required />
+        <input type="email" placeholder="Email Address" required />
+        <input type="text" placeholder="Shipping Address" required />
+        <input type="text" placeholder="City" required />
+        <input type="text" placeholder="Postal Code" required />
+        <button type="submit" class="confirm-btn">Place Order</button>
+      </form>
+
+      <button class="back-btn" onclick="window.location.href='index.html'">
+        ⬅ Back to Cart
+      </button>
+    </div>
+
+    <script>
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      const summaryDiv = document.getElementById("checkout-summary");
+
+      if (cart.length === 0) {
+        summaryDiv.innerHTML = "<p>Your cart is empty.</p>";
+      } else {
+        let total = 0;
+        summaryDiv.innerHTML = `
+          <table class="checkout-table">
+            <tr><th>Item</th><th>Qty</th><th>Price</th></tr>
+            ${cart
+              .map(
+                (item) => `
+              <tr>
+                <td>${item.name}</td>
+                <td>${item.qty}</td>
+                <td>$${item.price * item.qty}</td>
+              </tr>
+            `
+              )
+              .join("")}
+          </table>
+        `;
+        total = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
+        summaryDiv.innerHTML += `<p class="checkout-total">Total: $${total}</p>`;
+      }
+
+      document
+        .getElementById("checkout-form")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          alert("🎉 Order placed successfully!");
+          localStorage.removeItem("cart");
+          window.location.href = "index.html";
+        });
+    </script>
+  </body>
+</html>

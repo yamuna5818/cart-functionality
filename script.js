@@ -86,6 +86,14 @@ function searchProducts() {
   displayProducts(filtered);
 }
 
+function goToCheckout() {
+  if (cart.length === 0) {
+    alert("Your cart is empty!");
+    return;
+  }
+  window.location.href = "checkout.html";
+}
+
 const cartToggleBtn = document.getElementById("cart-toggle-btn");
 const cartEl = document.getElementById("cart");
 

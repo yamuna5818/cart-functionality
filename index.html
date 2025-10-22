@@ -7,32 +7,32 @@
     <link rel="stylesheet" href="style.css" />
   </head>
 
- <body>
-  <button id="cart-toggle-btn">🛒</button>
+  <body>
+    <button id="cart-toggle-btn">🛒</button>
 
-  <div class="container">
-    <div class="left">
-      <div class="header">
-        <span class="s1">🛒 <strong>Shopping Cart</strong></span>
+    <div class="container">
+      <div class="left">
+        <div class="header">
+          <span class="s1">🛒 <strong>Shopping Cart</strong></span>
+        </div>
+
+        <input
+          type="text"
+          id="search"
+          placeholder="search products..."
+          onkeyup="searchProducts()"
+        />
+        <div class="products" id="products"></div>
       </div>
 
-      <input
-        type="text"
-        id="search"
-        placeholder="search products..."
-        onkeyup="searchProducts()"
-      />
-      <div class="products" id="products"></div>
+      <div class="cart" id="cart">
+        <span class="s2">👜 Your Cart</span>
+        <div class="cart-c" id="cart-c"></div>
+        <p class="total" id="total">Total: $0</p>
+        <button class="checkout-btn" onclick="goToCheckout()">Checkout</button>
+      </div>
     </div>
 
-    <div class="cart" id="cart">
-      <span class="s2">👜 Your Cart</span>
-      <div class="cart-c" id="cart-c"></div>
-      <p class="total" id="total">Total: $0</p>
-    </div>
-  </div>
-
-  <script src="script.js"></script>
-</body>
-
+    <script src="script.js"></script>
+  </body>
 </html>
