@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shopping Cart</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+ <body>
+  <button id="cart-toggle-btn">🛒</button>
+
+  <div class="container">
+    <div class="left">
+      <div class="header">
+        <span class="s1">🛒 <strong>Shopping Cart</strong></span>
+      </div>
+
+      <input
+        type="text"
+        id="search"
+        placeholder="search products..."
+        onkeyup="searchProducts()"
+      />
+      <div class="products" id="products"></div>
+    </div>
+
+    <div class="cart" id="cart">
+      <span class="s2">👜 Your Cart</span>
+      <div class="cart-c" id="cart-c"></div>
+      <p class="total" id="total">Total: $0</p>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
