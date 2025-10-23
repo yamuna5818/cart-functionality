@@ -72,7 +72,7 @@ body {
   text-align: center;
   padding: 15px;
   transition: 0.3s ease;
-  box-shadow: rgba(0, 0, 0, 0.05) 0px 2px 5px;
+box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
 
 .product:hover {
@@ -236,6 +236,106 @@ body {
 #cart-toggle-btn:hover {
   background-color: #28a745;
 }
+
+
+
+
+
+/* ==========================
+   Checkout Form Styling
+========================== */
+
+#checkout-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin: 30px 0;
+  padding: 25px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+#checkout-form input {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 16px;
+  border: 1.5px solid #ccc;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+#checkout-form input:focus {
+  border-color: #28a745;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+  outline: none;
+}
+
+/* Place Order button */
+.confirm-btn {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 14px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.confirm-btn:hover {
+  background-color: #28a745;
+}
+
+/* Back button */
+.back-btn {
+  display: block;
+  margin: 10px auto 30px;
+  background-color: transparent;
+  color: #28a745;
+  border: 2px solid #28a745;
+  padding: 10px 20px;
+  font-size: 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.back-btn:hover {
+  background-color: #28a745;
+  color: #fff;
+}
+
+/* ==========================
+   Responsive Design
+========================== */
+@media (max-width: 600px) {
+  #checkout-form {
+    padding: 20px;
+    gap: 12px;
+  }
+
+  #checkout-form input {
+    font-size: 15px;
+    padding: 10px 12px;
+  }
+
+  .confirm-btn, .back-btn {
+    font-size: 15px;
+    padding: 12px;
+  }
+}
+
+
+
+
+
+
+
+
+
+
 
 /* Checkout Page */
 .checkout-container {
@@ -469,7 +569,7 @@ body {
   top: 10px;
   right: 20px;
   z-index: 1001;
-  font-size: 26px;
+  font-size: 18px;
   background-color: #218838;
   color: white;
   border: none;

@@ -9,12 +9,25 @@
 <body>
   <div class="checkout-container">
     <h2>Checkout Summary 🛍️</h2>
+
+    <!-- Order Summary -->
     <div id="checkout-items" class="checkout-items"></div>
     <p id="checkout-total" class="checkout-total">Total: $0</p>
-    
-    <button class="checkout-btn" onclick="alert('Order placed successfully!')">Place Order</button>
+
+    <!-- Checkout Form -->
+    <form id="checkout-form">
+      <input type="text" placeholder="Full Name" required />
+      <input type="email" placeholder="Email Address" required />
+      <input type="text" placeholder="Shipping Address" required />
+      <input type="text" placeholder="City" required />
+      <input type="text" placeholder="Postal Code" required />
+      <button type="submit" class="confirm-btn">Place Order</button>
+    </form>
+
+    <!-- Navigation Button -->
     <button class="back-btn" onclick="window.location.href='index.html'">← Back to Shop</button>
   </div>
+
   <script src="script.js"></script>
 </body>
 </html>
