@@ -15,6 +15,7 @@ function saveCart() {
 
 function displayProducts(list = products) {
   const productDiv = document.getElementById("products");
+  if (!productDiv) return;
   productDiv.innerHTML = "";
   list.forEach((product) => {
     const div = document.createElement("div");
@@ -44,21 +45,27 @@ function addToCart(id) {
 function removeFromCart(id) {
   cart = cart.filter((item) => item.id !== id);
   saveCart();
-  renderCart();
+  updateUI();
 }
 
-function updateQty(id, value) {
+function changeQty(id, delta) {
   const item = cart.find((i) => i.id === id);
   if (item) {
-    item.qty = value > 0 ? parseInt(value) : 1;
-    saveCart();
-    renderCart();
+    item.qty += delta;
+    if (item.qty <= 0) {
+      removeFromCart(id);
+    } else {
+      saveCart();
+      updateUI();
+    }
   }
 }
 
 function renderCart() {
   const cartContainer = document.getElementById("cart-c");
   const total = document.getElementById("total");
+  if (!cartContainer || !total) return;
+
   cartContainer.innerHTML = "";
   let totalPrice = 0;
 
@@ -69,17 +76,68 @@ function renderCart() {
     div.innerHTML = `
       <img src="${item.image}" alt="${item.name}" />
       <div class="cart-details">${item.name} - $${item.price}</div>
-      <input type="number" class="qty-input" value="${item.qty}" min="1" onchange="updateQty(${item.id}, this.value)" />
+      <div class="qty-controls">
+        <button class="qty-btn" onclick="changeQty(${item.id}, -1)">-</button>
+        <span class="qty-display">${item.qty}</span>
+        <button class="qty-btn" onclick="changeQty(${item.id}, 1)">+</button>
+      </div>
       <button class="remove" onclick="removeFromCart(${item.id})">Remove</button>
     `;
     cartContainer.appendChild(div);
   });
 
   total.textContent = `Total: $${totalPrice}`;
+
+  const existingCheckout = document.querySelector(".checkout-btn");
+  if (!existingCheckout && totalPrice > 0) {
+    const checkoutBtn = document.createElement("button");
+    checkoutBtn.textContent = "Proceed to Checkout";
+    checkoutBtn.classList.add("checkout-btn");
+    checkoutBtn.onclick = goToCheckout;
+    total.insertAdjacentElement("afterend", checkoutBtn);
+  }
+}
+
+function renderCheckout() {
+  const checkoutContainer = document.getElementById("checkout-items");
+  const totalEl = document.getElementById("checkout-total");
+  if (!checkoutContainer || !totalEl) return;
+
+  checkoutContainer.innerHTML = "";
+  let totalPrice = 0;
+
+  if (cart.length === 0) {
+    checkoutContainer.innerHTML = "<p>Your cart is empty!</p>";
+    totalEl.textContent = "Total: $0";
+    return;
+  }
+
+  cart.forEach((item) => {
+    totalPrice += item.price * item.qty;
+    const div = document.createElement("div");
+    div.classList.add("checkout-item");
+    div.innerHTML = `
+      <img src="${item.image}" alt="${item.name}" />
+      <div class="checkout-details">
+        <h4>${item.name}</h4>
+        <p>$${item.price}</p>
+        <div class="checkout-qty">
+          <button onclick="changeQty(${item.id}, -1)">-</button>
+          <span>${item.qty}</span>
+          <button onclick="changeQty(${item.id}, 1)">+</button>
+        </div>
+      </div>
+      <button class="remove" onclick="removeFromCart(${item.id})">Remove</button>
+    `;
+    checkoutContainer.appendChild(div);
+  });
+
+  totalEl.textContent = `Total: $${totalPrice}`;
 }
 
 function searchProducts() {
-  const query = document.getElementById("search").value.toLowerCase();
+  const query = document.getElementById("search")?.value.toLowerCase();
+  if (!query && query !== "") return;
   const filtered = products.filter((p) =>
     p.name.toLowerCase().includes(query)
   );
@@ -94,6 +152,15 @@ function goToCheckout() {
   window.location.href = "checkout.html";
 }
 
+function updateUI() {
+  const isCheckoutPage = window.location.pathname.includes("checkout.html");
+  if (isCheckoutPage) {
+    renderCheckout();
+  } else {
+    renderCart();
+  }
+}
+
 const cartToggleBtn = document.getElementById("cart-toggle-btn");
 const cartEl = document.getElementById("cart");
 
@@ -104,6 +171,11 @@ if (cartToggleBtn && cartEl) {
 }
 
 window.onload = function () {
-  displayProducts();
-  renderCart();
+  const isCheckoutPage = window.location.pathname.includes("checkout.html");
+  if (isCheckoutPage) {
+    renderCheckout();
+  } else {
+    displayProducts();
+    renderCart();
+  }
 };
