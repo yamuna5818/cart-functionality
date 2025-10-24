@@ -29,9 +29,7 @@ function displayProducts(list = products) {
       <p class="p2">$${product.price}</p>
       ${
         inCart
-          ? `
-          <button class="add" onclick="openCart()">Go to Cart</button>
-        `
+          ? `<button class="add" onclick="openCart()">Go to Cart</button>`
           : `<button class="add" onclick="addToCart(${product.id})">Add to Cart</button>`
       }
     `;
@@ -52,9 +50,7 @@ function addToCart(id) {
   saveCart();
   updateUI();
   updateCartCounter();
-  displayProducts(); 
-
-  openCart();
+  displayProducts();
 }
 
 function openCart() {
@@ -118,9 +114,8 @@ function renderCart() {
 function renderCheckout() {
   const checkoutContainer = document.getElementById("checkout-items");
   const totalEl = document.getElementById("checkout-total");
-  const formEl = document.getElementById("checkout-form");
-
   if (!checkoutContainer || !totalEl) return;
+
   checkoutContainer.innerHTML = "";
   let totalPrice = 0;
 
@@ -151,19 +146,6 @@ function renderCheckout() {
   });
 
   totalEl.textContent = `Total: $${totalPrice}`;
-
-  if (formEl) {
-    formEl.addEventListener("submit", function (e) {
-      e.preventDefault();
-      if (cart.length === 0) {
-        alert("Your cart is empty!");
-        return;
-      }
-      alert("🎉 Order placed successfully!");
-      localStorage.removeItem("cart");
-      window.location.href = "index.html";
-    });
-  }
 }
 
 function updateUI() {
@@ -214,3 +196,82 @@ window.onload = function () {
     updateCartCounter();
   }
 };
+
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("checkout-form");
+
+  const fields = {
+    name: {
+      input: document.getElementById("name"),
+      error: document.getElementById("name-error"),
+      pattern: /^[A-Za-z\s]{3,}$/,
+      message: "Please enter a valid full name (min 3 letters).",
+    },
+    email: {
+      input: document.getElementById("email"),
+      error: document.getElementById("email-error"),
+      pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+      message: "Enter a valid email address.",
+    },
+    address: {
+      input: document.getElementById("address"),
+      error: document.getElementById("address-error"),
+      pattern: /^.{5,}$/,
+      message: "Address must be at least 5 characters long.",
+    },
+    city: {
+      input: document.getElementById("city"),
+      error: document.getElementById("city-error"),
+      pattern: /^[A-Za-z\s]{2,}$/,
+      message: "Enter a valid city name.",
+    },
+    postal: {
+      input: document.getElementById("postal"),
+      error: document.getElementById("postal-error"),
+      pattern: /^\d{5,6}$/,
+      message: "Postal code must be 5 or 6 digits.",
+    },
+  };
+
+  const validateField = (field) => {
+    const value = field.input.value.trim();
+    const isValid = field.pattern.test(value);
+
+    if (!isValid) {
+      field.input.classList.remove("success");
+      field.input.classList.add("error");
+      field.error.textContent = field.message;
+    } else {
+      field.input.classList.remove("error");
+      field.input.classList.add("success");
+      field.error.textContent = "";
+    }
+
+    return isValid;
+  };
+
+  Object.values(fields).forEach((field) => {
+    field.input.addEventListener("input", () => validateField(field));
+  });
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    let allValid = true;
+
+    Object.values(fields).forEach((field) => {
+      const valid = validateField(field);
+      if (!valid) allValid = false;
+    });
+
+    if (allValid) {
+      alert(" Order placed successfully!");
+      form.reset();
+      Object.values(fields).forEach((field) => {
+        field.input.classList.remove("success", "error");
+        field.error.textContent = "";
+      });
+    }
+  });
+});
+
