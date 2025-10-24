@@ -9,67 +9,81 @@ const products = [
 
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-// Save cart to localStorage
 function saveCart() {
   localStorage.setItem("cart", JSON.stringify(cart));
 }
 
-// Display products
 function displayProducts(list = products) {
   const productDiv = document.getElementById("products");
   if (!productDiv) return;
   productDiv.innerHTML = "";
+
   list.forEach((product) => {
+    const inCart = cart.find((item) => item.id === product.id);
     const div = document.createElement("div");
     div.classList.add("product");
+
     div.innerHTML = `
       <img src="${product.image}" alt="${product.name}" />
       <p class="p1">${product.name}</p>
       <p class="p2">$${product.price}</p>
-      <button class="add" onclick="addToCart(${product.id})">Add to Cart</button>
+      ${
+        inCart
+          ? `
+          <button class="add" onclick="openCart()">Go to Cart</button>
+        `
+          : `<button class="add" onclick="addToCart(${product.id})">Add to Cart</button>`
+      }
     `;
     productDiv.appendChild(div);
   });
 }
 
-// Add item to cart
 function addToCart(id) {
   const product = products.find((p) => p.id === id);
   const existing = cart.find((item) => item.id === id);
+
   if (existing) {
-    existing.qty++;
+    existing.qty += 1;
   } else {
     cart.push({ ...product, qty: 1 });
   }
+
   saveCart();
   updateUI();
   updateCartCounter();
+  displayProducts(); 
+
+  openCart();
 }
 
-// Remove item from cart
+function openCart() {
+  const cartEl = document.getElementById("cart");
+  if (cartEl) cartEl.classList.add("active");
+}
+
 function removeFromCart(id) {
   cart = cart.filter((item) => item.id !== id);
   saveCart();
   updateUI();
   updateCartCounter();
+  displayProducts();
 }
 
-// Change item quantity
 function changeQty(id, delta) {
   const item = cart.find((i) => i.id === id);
   if (item) {
     item.qty += delta;
-    if (item.qty <= 0) {
-      removeFromCart(id);
-    } else {
+    if (item.qty <= 0) removeFromCart(id);
+    else {
       saveCart();
       updateUI();
       updateCartCounter();
+      displayProducts();
     }
   }
 }
 
-// Render cart in sidebar or main page
 function renderCart() {
   const cartContainer = document.getElementById("cart-c");
   const total = document.getElementById("total");
@@ -88,7 +102,7 @@ function renderCart() {
         <h4>${item.name}</h4>
         <p>$${item.price}</p>
         <div class="checkout-qty">
-          <button onclick="changeQty(${item.id}, -1)">-</button>
+          <button onclick="changeQty(${item.id}, -1)">−</button>
           <span>${item.qty}</span>
           <button onclick="changeQty(${item.id}, 1)">+</button>
         </div>
@@ -99,25 +113,14 @@ function renderCart() {
   });
 
   total.textContent = `Total: $${totalPrice}`;
-
-  const existingCheckout = document.querySelector(".checkout-btn");
-  if (!existingCheckout && totalPrice > 0) {
-    const checkoutBtn = document.createElement("button");
-    checkoutBtn.textContent = "Proceed to Checkout";
-    checkoutBtn.classList.add("checkout-btn");
-    checkoutBtn.onclick = goToCheckout;
-    total.insertAdjacentElement("afterend", checkoutBtn);
-  }
 }
 
-// Render checkout page
 function renderCheckout() {
   const checkoutContainer = document.getElementById("checkout-items");
   const totalEl = document.getElementById("checkout-total");
   const formEl = document.getElementById("checkout-form");
 
   if (!checkoutContainer || !totalEl) return;
-
   checkoutContainer.innerHTML = "";
   let totalPrice = 0;
 
@@ -137,7 +140,7 @@ function renderCheckout() {
         <h4>${item.name}</h4>
         <p>$${item.price}</p>
         <div class="checkout-qty">
-          <button onclick="changeQty(${item.id}, -1)">-</button>
+          <button onclick="changeQty(${item.id}, -1)">−</button>
           <span>${item.qty}</span>
           <button onclick="changeQty(${item.id}, 1)">+</button>
         </div>
@@ -149,16 +152,13 @@ function renderCheckout() {
 
   totalEl.textContent = `Total: $${totalPrice}`;
 
-  // ✅ Handle form submission (Place Order)
   if (formEl) {
     formEl.addEventListener("submit", function (e) {
       e.preventDefault();
-
       if (cart.length === 0) {
         alert("Your cart is empty!");
         return;
       }
-
       alert("🎉 Order placed successfully!");
       localStorage.removeItem("cart");
       window.location.href = "index.html";
@@ -166,17 +166,12 @@ function renderCheckout() {
   }
 }
 
-// Update UI based on page
 function updateUI() {
   const isCheckoutPage = window.location.pathname.includes("checkout.html");
-  if (isCheckoutPage) {
-    renderCheckout();
-  } else {
-    renderCart();
-  }
+  if (isCheckoutPage) renderCheckout();
+  else renderCart();
 }
 
-// Update cart counter
 function updateCartCounter() {
   const counter = document.getElementById("cart-counter");
   if (!counter) return;
@@ -184,17 +179,14 @@ function updateCartCounter() {
   counter.textContent = totalItems;
 }
 
-// Search products
 function searchProducts() {
   const query = document.getElementById("search")?.value.toLowerCase();
-  if (!query && query !== "") return;
   const filtered = products.filter((p) =>
     p.name.toLowerCase().includes(query)
   );
   displayProducts(filtered);
 }
 
-// Go to checkout page
 function goToCheckout() {
   if (cart.length === 0) {
     alert("Your cart is empty!");
@@ -203,7 +195,6 @@ function goToCheckout() {
   window.location.href = "checkout.html";
 }
 
-// Cart toggle
 const cartToggleBtn = document.getElementById("cart-toggle-btn");
 const cartEl = document.getElementById("cart");
 
@@ -213,7 +204,6 @@ if (cartToggleBtn && cartEl) {
   });
 }
 
-// Initialize page
 window.onload = function () {
   const isCheckoutPage = window.location.pathname.includes("checkout.html");
   if (isCheckoutPage) {
@@ -221,6 +211,6 @@ window.onload = function () {
   } else {
     displayProducts();
     renderCart();
-    updateCartCounter(); // show cart count on page load
+    updateCartCounter();
   }
 };
