@@ -255,23 +255,25 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   form.addEventListener("submit", (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    let allValid = true;
+  let allValid = true;
 
+  Object.values(fields).forEach((field) => {
+    const valid = validateField(field);
+    if (!valid) allValid = false;
+  });
+
+  if (allValid) {
+    alert("Order placed successfully!");
+    form.reset();
     Object.values(fields).forEach((field) => {
-      const valid = validateField(field);
-      if (!valid) allValid = false;
+      field.input.classList.remove("success", "error");
+      field.error.textContent = "";
     });
 
-    if (allValid) {
-      alert(" Order placed successfully!");
-      form.reset();
-      Object.values(fields).forEach((field) => {
-        field.input.classList.remove("success", "error");
-        field.error.textContent = "";
-      });
-    }
-  });
+    
+    window.location.href = "index.html"; 
+  }
 });
-
+});
